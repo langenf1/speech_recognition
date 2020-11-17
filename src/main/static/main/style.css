@@ -1,0 +1,394 @@
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+body {
+    font-family: 'Poppins', sans-serif;
+    background-size: 100%;
+}
+
+p {
+    font-weight: 500;
+    color: #fff;
+    text-align:center;
+    transition: all 0.2s;
+    padding-top: 1rem;
+    font-size: large;
+}
+
+a,
+a:hover,
+a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.logo {
+	position: absolute;
+	top: 15px;
+	right: 0px;
+	margin-right: 20px;
+}
+
+#counter {
+    display: block;
+}
+
+#counter h4 {
+    color: black;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: 0.5s;
+}
+
+#wrapper {
+    height: 7rem;
+    box-sizing: border-box;
+    position: relative;
+    display: table;
+    padding-top: 10px;
+    width: 100%;
+}
+
+#prediction-wrapper {
+    height: 7rem;
+    box-sizing: border-box;
+    display: table-cell;
+    text-align: center;
+    padding: 10px;
+    width: 50%;
+}
+
+#result-wrapper {
+    height: 7rem;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+#answer-wrapper {
+    height: 7rem;
+    box-sizing: border-box;
+    display: table-cell;
+    text-align: center;
+    padding: 10px;
+    width: 50%;
+}
+
+#information {
+    height: 7rem;
+    box-sizing: border-box;
+    display: table-cell;
+    text-align: center;
+    padding-top: 10px;
+    width: 33.3%;
+}
+
+#recorder-wrapper {
+    text-align: center;
+}
+
+#upload-wrapper {
+    height: 7rem;
+    box-sizing: border-box;
+    display: table-cell;
+    text-align: center;
+    padding-top: 10px;
+    width: 33.3%;
+}
+
+h4 {
+    color: black;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: 0.5s;
+}
+
+h5 {
+    color: black;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    transition: 0.5s;
+}
+
+#recorder-wrapper:focus, #recorder-wrapper:active{
+    outline: none;
+}
+
+#recorder-wrapper img {
+    outline: none;
+    transition: 0.5s all;
+}
+
+.record-btn {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    transition: ease 0.5s;
+}
+
+.record-btn:hover {
+    transition: ease 0.5s;
+    outline: none;
+    filter: brightness(90%);
+}
+.record-btn:focus, .record-btn:active {
+    outline: none;
+}
+
+#image-wrapper {
+    height: 20rem;
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("background.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: 0.5s;
+    transition-timing-function: ease;
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+}
+
+#image-wrapper h1 {
+    color: #fff;
+    padding-top: 6%;
+    position: relative;
+    padding-bottom: 1rem;
+    transition: 1s;
+}
+
+#image-wrapper h4 {
+    color: #fff;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: 1s;
+}
+
+.navbar {
+    position: static;
+    width: 100%;
+    background: #fff;
+    border: 0;
+    border-radius: 0;
+    min-height: 5.5rem;
+}
+
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dashed #ddd;
+    margin: 40px 0;
+}
+
+@media (min-width: 600px) {
+    .answer_wrapper { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 900px) {
+    .answer_wrapper { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media all and (max-width:30em){
+	a.answer{
+		display:block;
+		margin:0.8em auto;
+	}
+}
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
+
+#sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100vh;
+    z-index: 999;
+    background: #f7b22d;
+    color: #fff;
+    transition: all 0.5s;
+    overflow-y: scroll;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar.active {
+    left: 0;
+}
+
+#dismiss {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background: #f7b22d;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+#dismiss:hover {
+    background: #fff;
+    color: #f7c81e;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+}
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #f7c81e;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #f7ab40;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: #f7c81e;
+    background: #fff;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #f7c81e;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #f7b22d;
+}
+
+ul.CTAs {
+    padding: 20px;
+}
+
+ul.CTAs a {
+    text-align: center;
+    font-size: 0.9em !important;
+    display: block;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+a.download {
+    background: #fff;
+    color: #f7b22d;
+}
+
+a.article,
+a.article:hover {
+    background: #f7b22d !important;
+    color: #fff !important;
+}
+
+#wrapper input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+    padding-bottom: 5px;
+    transition: 0.5s all;
+}
+
+.custom-file-upload:focus, label:focus {
+	outline: none;
+}
+
+.custom-file-upload + label * {
+	pointer-events: none;
+}
+
+.custom-file-upload + label {
+    color: #d3394c;
+}
+
+.custom-file-upload + label:hover {
+    color: #722040;
+}
+
+.custom-file-upload + label figure {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #d3394c;
+    display: block;
+    padding: 20px;
+    margin: 0 auto 10px;
+}
+
+.custom-file-upload + label:hover figure {
+    background-color: #722040;
+}
+
+.custom-file-upload + label svg {
+    width: 100%;
+    height: 100%;
+    fill: #f1e5e6;
+}
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+#content {
+    width: 100%;
+    min-height: 100vh;
+    transition: all 0.3s;
+    position: absolute;
+    top: 0;
+    right: 0;
+}

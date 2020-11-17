@@ -1,0 +1,18 @@
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div id="result-wrapper">
+        <h4 id="prediction">Results:</h4>
+        {% if audio_length %}
+            <h5 id="pred_emotion">Audio Length: {{audio_length}} sec</h5>
+        {% endif %}
+        {% if audio_bitrate %}
+            <h5 id="pred_emotion">Audio Bitrate: {{audio_bitrate}} Hz</h5>
+        {% endif %}
+        {% if audio_extension %}
+            <h5 id="pred_emotion">Audio Extension: {{audio_extension}}</h5>
+        {% endif %}
+        <br><br>
+        <button type="submit">Done</button>
+    </div>
+</form>
