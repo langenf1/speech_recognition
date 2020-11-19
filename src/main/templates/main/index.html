@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block head %}
-    <script type="text/javascript" src="{% static 'main/uploader.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main/recorder_uploader.js' %}"></script>
     <script>let CSRF_TOKEN = "{{ csrf_token }}";</script>
 {% endblock %}
 
@@ -11,20 +11,39 @@
 {% if analyzed_file %}
     {% include "main/result.html" %}
 {% else %}
-    <!-- Information
+    <!-- Information -->
     <div id="information">
-        <h4>Information</h4>
-        <h5 id="totalfiles">Total Audio Files: {{totalfiles}}</h5>
-        <h5 id="model_language">Model Language: {{model_language}}</h5>
-        <h5 id="model">Powered by DialogFlow (Google Cloud)</h5>
-    </div>  -->
+        <h4>Text</h4>
+        <h5 id="full_text">Transcribed Audio: {{ text }}</h5>
+    </div>
+
+    <!-- Recorder -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div id="recorder-wrapper">
+            <h4>Record Audio</h4>
+            <button value="notrec" class="custom-file-upload" id="recorder" type="button">
+            </button>
+            <label for="recorder">
+                <figure id="record_figure">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M12 2c1.103 0 2 .897 2 2v7c0 1.103-.897 2-2 2s-2-.897-2-2v-7c0-1.103.897-2 2-2zm0-2c-2.209 0-4 1.791-4 4v7c0 2.209 1.791 4 4 4s4-1.791 4-4v-7c0-2.209-1.791-4-4-4zm8 9v2c0 4.418-3.582 8-8 8s-8-3.582-8-8v-2h2v2c0 3.309 2.691 6 6 6s6-2.691 6-6v-2h2zm-7 13v-2h-2v2h-4v2h10v-2h-4z"></path>
+                    </svg>
+                </figure>
+            </label>
+            <div id="secwrapper" style="display: block;">
+                <div id="counter" style="display: inline-block;"></div>
+                <div style="display: inline-block;"><h4>sec</h4></div>
+            </div>
+        </div>
+    </form>
 
     <!-- Uploader -->
     <div id="upload-wrapper">
         <h4>Upload Audio</h4>
         <form method="POST" enctype="multipart/form-data" id="fileform" name="fileform">
             {% csrf_token %}
-            <input type="file" id="selectedFile" name="audio_upload" accept=".wav" class="custom-file-upload"/>
+            <input type="file" id="selectedFile" name="audio_upload" accept=".wav, .mp3" class="custom-file-upload"/>
             <label for="selectedFile">
                 <figure>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17">
@@ -56,13 +75,6 @@
           event.preventDefault();
           upload_audio(file);
       });
-
-    // On load:
-    $(document).ready(function() {
-        if (sessionStorage.getItem("wrapper2")) {
-            document.getElementById("wrapper").innerHTML = sessionStorage.getItem("wrapper2");
-            sessionStorage.removeItem("wrapper2");
-        }
-    })
+    onLoad();
 </script>
 {% endblock %}

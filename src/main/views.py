@@ -6,7 +6,7 @@ from typing import Union
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from src.main.analyzer import save_recording, check_audio_length
+from src.main.analyzer import save_recording, check_audio_length, speech_to_text
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -32,31 +32,32 @@ def index(req: HttpRequest) -> Union[HttpResponse, JsonResponse]:
     with open('main/config.json') as jsonfile:
         req.session.setdefault('context', json.load(jsonfile))
 
+    GOOGLE_AUTHENTICATION_FILE_NAME = "dialogflow.json"
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), GOOGLE_AUTHENTICATION_FILE_NAME)
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = path
+
     # Create wrapper for session context and update model variables
     context = req.session["context"]
 
     # On audio upload or in-app recording:
-    if req.method == 'POST' and (req.FILES.get("audio_upload", False)):
+    if req.method == 'POST' and (req.FILES.get("audio_upload", False) or req.FILES.get("audio_recording", False)):
 
         # Convert audio to .wav and save it
-        file = req.FILES['audio_upload']
-        context, to_be_analyzed = save_recording(context=context, file=file)
-
-        if not check_audio_length(to_be_analyzed):
-            # Audio file too short, remove file and return error
-            os.remove(to_be_analyzed)
-            return JsonResponse({"error": "Audio file is too short"}, status=400)
+        is_recording = False if req.FILES.get("audio_upload", False) else True
+        file = req.FILES['audio_recording'] if is_recording else req.FILES['audio_upload']
+        context, to_be_analyzed = save_recording(context=context, file=file, is_recording=is_recording)
+        context['text'] = ""
+        context['text'] = speech_to_text(context['to_be_analyzed'])
 
         # Replace session context with wrapper
         req.session['context'] = context
 
         # Render wrapper and return it to AJAX call
-        res = {"html": render_to_string('main/result.html', context=req.session['context'], request=req)}
+        res = {"text": context['text']}
         return JsonResponse(res)
 
-    # Reset file/result handler
-    context['analyzed_file'] = None
-
+    context['text'] = ""
+    context['to_be_analyzed'] = None
     # Replace session context with wrapper
     req.session['context'] = context
     return render(req, 'main/index.html', req.session['context'])
