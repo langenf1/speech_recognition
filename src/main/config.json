@@ -2,4 +2,7 @@
   "audio_length": null,
   "audio_bitrate": null,
   "audio_extension": null,
-  "full_text": "" }
+  "full_text": "",
+  "wer": 0.00,
+  "wcr": 0.00,
+  "rtf": 0.00 }

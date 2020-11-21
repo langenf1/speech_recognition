@@ -13,15 +13,45 @@
 {% else %}
     <!-- Information -->
     <div id="information">
-        <h4>Text</h4>
-        <h5 id="full_text">Transcribed Audio: {{ text }}</h5>
+        <h4>Information</h4>
+        <div style="width: 50%; margin: 0 auto">
+            <div style="margin: 0 auto; float: left; text-align: left">
+                <h5>Word Error Rate: </h5>
+                <h5>Word Correct Rate: </h5>
+                <h5>Real Time Factor: </h5>
+            </div>
+            <div style="margin: 0 auto; text-align: left; display: inline-block">
+                <h5><div id="wer">{{ wer }}</div></h5>
+                <h5><div id="wcr">{{ wcr }}</div></h5>
+                <h5><div id="rtf">{{ rtf }}</div></h5>
+            </div>
+        </div>
+        <form method="POST" enctype="multipart/form-data" id="information" name="information"
+              style="display: inline-block; height: auto">
+            {% csrf_token %}
+            <button type="submit">Update</button>
+        </form>
+        <h4>Audio Transcription:</h4>
+        <h5 id="full_text">{{ text }}</h5>
+    </div>
+
+    <!-- Input text -->
+    <div id="text-wrapper">
+    <h4>Audio Script</h4>
+        <div style="width: 75%; text-align: center; margin: 0 auto">
+            <form>
+                <div class="form-group">
+                    <textarea class="form-control" id="text_area" rows="11"></textarea>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Recorder -->
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div id="recorder-wrapper">
-            <h4>Record Audio</h4>
+            <h4>Live Transcription</h4>
             <button value="notrec" class="custom-file-upload" id="recorder" type="button">
             </button>
             <label for="recorder">
@@ -35,6 +65,10 @@
                 <div id="counter" style="display: inline-block;"></div>
                 <div style="display: inline-block;"><h4>sec</h4></div>
             </div>
+            <br>
+            <h5>Live audio cut time: <output id="num" style="margin-left: 10px">3</output> sec</h5>
+            <input type="range" value="3" min="3" max="9" step="1" oninput="num.value = this.value">
+            <br>
         </div>
     </form>
 
@@ -58,23 +92,31 @@
     </div>
     {% endif %}
 </div>
-<script>
-    // Handle File Upload Button
-    let inputs = document.querySelectorAll(".custom-file-upload");
-    Array.prototype.forEach.call(inputs, function (input) {
-        let label = input.nextElementSibling;
-        input.addEventListener("change", function (e) {
-            label.querySelector("span").innerHTML = e.target.value.split("\\").pop();
+    <script>
+        // Handle File Upload Button
+        let inputs = document.querySelectorAll(".custom-file-upload");
+        Array.prototype.forEach.call(inputs, function (input) {
+            let label = input.nextElementSibling;
+            input.addEventListener("change", function (e) {
+                label.querySelector("span").innerHTML = e.target.value.split("\\").pop();
+            });
         });
-    });
 
-    // Handle File Upload (POST)
-      const form = document.getElementById("fileform");
-      form.addEventListener( "submit", function ( event ) {
-          let file = document.getElementById("selectedFile").files[0];
-          event.preventDefault();
-          upload_audio(file);
-      });
-    onLoad();
-</script>
+        // Handle File Upload (POST)
+        const form = document.getElementById("fileform");
+        form.addEventListener( "submit", function ( event ) {
+            let file = document.getElementById("selectedFile").files[0];
+            event.preventDefault();
+            upload_audio(file);
+          });
+
+        // Handle Information Update (POST)
+        const form2 = document.getElementById("information");
+        form2.addEventListener( "submit", function ( event ) {
+            let input_text = document.getElementById("text_area").value;
+            event.preventDefault();
+            upload_text(input_text);
+        });
+        onLoad();
+    </script>
 {% endblock %}

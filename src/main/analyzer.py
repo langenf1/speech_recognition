@@ -4,7 +4,7 @@ in settings.py. The models will only be loaded one time at server start if creat
 """
 
 import logging
-import shutil
+import time
 import subprocess
 from typing import Tuple
 from django.core.files.uploadedfile import UploadedFile
@@ -13,6 +13,7 @@ import librosa
 import src.recorder.settings as cfg
 import os
 import dialogflow_v2 as dialogflow
+import mutagen.mp3
 
 
 def save_recording(context: dict, file: UploadedFile, is_recording: bool = False) -> Tuple[dict, str]:
@@ -139,18 +140,21 @@ def check_audio_length(file_path: str) -> bool:
 
 
 def speech_to_text(audio_file_path, language_code="en", project_id="clean-pilot-296112", session_id="me"):
-    """Returns the result of detect intent with an audio file as input.
+    """Returns the result of detect intent with an audio file as input and the RTF (Real Time Factor)
 
     Using the same `session_id` between requests allows continuation
     of the conversation."""
+    start = time.time()
     session_client = dialogflow.SessionsClient()
 
     # Note: hard coding audio_encoding and sample_rate_hertz for simplicity.
     audio_encoding = dialogflow.enums.AudioEncoding.AUDIO_ENCODING_UNSPECIFIED
     if audio_file_path.split(".")[-1] == "wav":
-        sample_rate_hertz = get_audio_features(audio_file_path)[0]
+        sample_rate_hertz, length = get_audio_features(audio_file_path)
     else:
-        sample_rate_hertz = 16000
+        audio = mutagen.mp3.MP3(audio_file_path)
+        length = audio.info.length
+        sample_rate_hertz = audio.info.sample_rate
 
     session = session_client.session_path(project_id, session_id)
 
@@ -166,4 +170,5 @@ def speech_to_text(audio_file_path, language_code="en", project_id="clean-pilot-
         session=session, query_input=query_input,
         input_audio=input_audio)
 
-    return response.query_result.query_text
+    end = time.time()
+    return response.query_result.query_text, round((end - start) / length, 2)

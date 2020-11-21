@@ -1,4 +1,5 @@
-let counting, counter, elem, timer, i, limit, rec, should_record, mediaRecorder, error, full_text, oldContent;
+let counting, counter, elem, timer, i, limit, rec, should_record, mediaRecorder, error, full_text, oldContent, seconds_per_cut;
+let wer, wcr, rtf, reset_text, input_text;
 let recordedChunks = [];
 
 window.onload = function () {
@@ -11,16 +12,30 @@ window.onload = function () {
     counter = document.getElementById("counter");
     elem = document.getElementById("recorder");
     full_text = document.getElementById("full_text");
-    full_text.innerHTML = "Transcribed Audio: ";
+    input_text = document.getElementById("text_area")
+    wer = document.getElementById("wer");
+    wcr = document.getElementById("wcr");
+    rtf = document.getElementById("rtf");
+    full_text.innerHTML = "";
+    input_text.value = "";
+    wer.innerHTML = "0.0";
+    wcr.innerHTML = "0.0";
+    rtf.innerHTML = "0.0";
     counter.innerHTML = "<h4>" + 0 + "</h4>";
+    seconds_per_cut = document.getElementById("num");
     should_record = false;
+    reset_text = false;
 };
 
 function onLoad() {
     // This code is always executed on page load
     document.getElementById("recorder").onclick = function () {
         if (elem.value === "notrec") {
-            full_text.innerHTML = "Transcribed Audio: ";
+            full_text.innerHTML = "";
+            wer.innerHTML = 0.0
+            wcr.innerHTML = 0.0
+            rtf.innerHTML = 0.0
+
             // Store old button content in case we need to reset the button
             oldContent = fig.innerHTML;
 
@@ -44,12 +59,16 @@ function onLoad() {
         } else {
             elem.value = "notrec";
             fig.innerHTML = oldContent;
+            should_record = false;
+            if ((i / (seconds_per_cut.value * 100)) <= 1) {
+                reset_text = true;
+            } else {
+                reset_text = false;
+            }
             mediaRecorder.stop();
             reset();
-            should_record = false;
         }
     };
-
     if (elem.value === "notrec") {
         counting = false;
     } else {
@@ -64,24 +83,29 @@ function start() {
     }
 }
 
+
 function increase() {
-    i++;
-    if (i < limit * 100 && i % ((limit * 100)/15) === 0) {
-        mediaRecorder.stop();
-        mediaRecorder.start();
+    if (i < limit * 100 && i > 0) {
+        if (i % (seconds_per_cut.value * 100) === 0) {
+            if ((i / (seconds_per_cut.value * 100)) < 2) {
+                reset_text = true;
+            } else {
+                reset_text = false;
+            }
+            mediaRecorder.stop();
+            mediaRecorder.start();
+        }
     } else {
         if (i >= limit * 100) {
             reset();
             elem.value = "notrec";
-            fig.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">\n' +
-                '<path d="M12 2c1.103 0 2 .897 2 2v7c0 1.103-.897 2-2 2s-2-.897-2-2v-7c0-1.103.897-2\n' +
-                '2-2zm0-2c-2.209 0-4 1.791-4 4v7c0 2.209 1.791 4 4 4s4-1.791 4-4v-7c0-2.209-1.791-4-4-4zm8\n' +
-                ' 9v2c0 4.418-3.582 8-8 8s-8-3.582-8-8v-2h2v2c0 3.309 2.691 6 6 6s6-2.691 6-6v-2h2zm-7\n' +
-                ' 13v-2h-2v2h-4v2h10v-2h-4z"></path></svg>';
+            fig.innerHTML = oldContent;
             should_record = false;
+            reset_text = false;
             mediaRecorder.stop();
         }
     }
+    i++;
     counter.innerHTML = "<h4>" + i / 100 + "</h4>";
 }
 
@@ -107,6 +131,8 @@ const handleSuccess = function (stream) {
 
     const options = {mimeType: 'audio/webm'};
     mediaRecorder = new MediaRecorder(stream, options);
+    mediaRecorder.stop_reset = function() {};
+
     if (should_record === true) {
         console.log("Started Recording");
         mediaRecorder.start();
@@ -119,14 +145,16 @@ const handleSuccess = function (stream) {
     });
 
     mediaRecorder.addEventListener('stop', function () {
-        console.log("Stopped Recording");
-        postData("audio_recording", '', recordedChunks).then((data) => {
-            full_text.innerHTML = full_text.innerHTML + " " + data['text'];
+        console.log("Stopped recording");
+        console.log("Resetting text: " + reset_text.toString())
+        postData("audio_recording", '', recordedChunks, reset_text).then((data) => {
+            full_text.innerHTML = data['text'];
+            upload_text(input_text.value);
         });
     })
 };
 
-async function postData(name = '', url = '', data) {
+async function postData(name = '', url = '', data, reset = true) {
     let fd = new FormData;
 
     if (name === "audio_recording") {
@@ -135,8 +163,9 @@ async function postData(name = '', url = '', data) {
     } else {
         fd.append(name, data);
     }
-    fd.append("csrfmiddlewaretoken", CSRF_TOKEN);
+    fd.append("reset", reset.toString());
 
+    fd.append("csrfmiddlewaretoken", CSRF_TOKEN);
     const response = await fetch(url, {method: "POST", body: fd, credentials: 'same-origin',});
 
     if (response.status === 200) {
@@ -148,7 +177,16 @@ async function postData(name = '', url = '', data) {
 }
 
 function upload_audio(data) {
-    postData("audio_upload", '', data).then((data) => {
-        full_text.innerHTML = "Transcribed Audio: " + data['text'];
+    postData("audio_upload", '', data, true).then((data) => {
+        full_text.innerHTML = data['text'];
+        upload_text(input_text.value);
+    });
+}
+
+function upload_text(data) {
+    postData("text_upload", '', data).then((data) => {
+        wer.innerHTML = data['wer'];
+        wcr.innerHTML = data['wcr'];
+        rtf.innerHTML = data['rtf'];
     });
 }
