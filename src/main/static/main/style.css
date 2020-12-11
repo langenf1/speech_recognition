@@ -79,7 +79,7 @@ a:focus {
     display: table-cell;
     text-align: center;
     padding-top: 10px;
-    width: 33.3%;
+    width: 25%;
 }
 
 #recorder-wrapper {
@@ -92,7 +92,16 @@ a:focus {
     display: table-cell;
     text-align: center;
     padding-top: 10px;
-    width: 33.3%;
+    width: 25%;
+}
+
+#text-wrapper {
+    height: 7rem;
+    box-sizing: border-box;
+    display: table-cell;
+    text-align: center;
+    padding-top: 10px;
+    width: 25%;
 }
 
 h4 {
@@ -391,4 +400,9 @@ a.article:hover {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+/* Misc */
+#ex1Slider .slider-selection {
+    background: #BABABA;
 }

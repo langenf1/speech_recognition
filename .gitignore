@@ -127,3 +127,5 @@ dmypy.json
 .pyre/
 
 !.gitkeep
+src/main/dialogflow.json
+node_modules
