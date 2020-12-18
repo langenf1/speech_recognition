@@ -82,7 +82,6 @@ def index(req: HttpRequest) -> Union[HttpResponse, JsonResponse]:
 
         context = calculate_metrics(context, truth, hypothesis)
         req.session['context'] = context
-        print(context)
 
         res = {'wer': context['wer'], 'wcr': context['wcr'], 'rtf': context['rtf'],
                'precision_micro': context['precision_micro'], 'precision_macro': context['precision_macro'],

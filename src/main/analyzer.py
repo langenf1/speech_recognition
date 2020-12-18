@@ -54,7 +54,8 @@ def save_recording(context: dict, file: UploadedFile, is_recording: bool = False
 
         else:
             try:
-                filename = os.path.join(cfg.MEDIA_ROOT, fs.save(file.name, file))
+                filename = fs.save(file.name, file)
+                filename = os.path.join(cfg.MEDIA_ROOT, filename)
                 if filename.split(".")[-1] == "wav":
                     subprocess.call('ffmpeg -y -i {} -acodec pcm_s16le -ac 1 -ar 48000 {}_converted.wav'
                                     .format(filename, filename[:-4]),
@@ -93,7 +94,7 @@ def get_audio_features(audio_path: str, round_duration: bool = False) -> Tuple[i
         y, sr = librosa.load(audio_path, sr=None)
         duration = librosa.core.get_duration(y, sr)
 
-    except Exception:
+    except Exception as e:
         try:
             # Call FFMPEG and convert values to 16bit int values (_TEMP_ is added because FFMPEG doesn't support
             # in-place file editing)
@@ -178,7 +179,8 @@ def speech_to_text(audio_file_path, language_code="en", project_id="clean-pilot-
 def calculate_metrics(context: dict, truth, hypothesis):
     """ Calculates the relevant metrics for speech recognition model analysis. """
     try:
-        hypo_dict = truth_dict = {}
+        hypo_dict = {}
+        truth_dict = {}
 
         for word in hypothesis:
             hypo_dict[word] = hypo_dict[word] + 1 if word in hypo_dict else 1
@@ -205,7 +207,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
 
             context['wcr'] = round(correct / len(truth), 2)
         except (ZeroDivisionError, ValueError):
-            print("wcr error")
             context['wcr'] = 0.00
     else:
         context['wcr'] = 0.00
@@ -219,7 +220,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
 
         context["precision_micro"] = round(true_positives / len(hypothesis), 2)
     except (ZeroDivisionError, ValueError):
-        print("precision micro error")
         context["precision_micro"] = 0.00
 
     # Precision Macro
@@ -235,7 +235,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
         context["precision_macro"] = round(1 / (len(hypo_dict.keys())) * sum_precision, 2)
 
     except (ZeroDivisionError, ValueError):
-        print("precision macro error")
         context["precision_macro"] = 0.00
 
     # Recall Micro
@@ -247,7 +246,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
 
         context["recall_micro"] = round(true_positives / len(truth), 2)
     except (ZeroDivisionError, ValueError):
-        print("recall micro error")
         context["recall_micro"] = 0.00
 
     # Recall Macro
@@ -262,7 +260,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
         sum_recall = sum(match_dict[key] / truth_dict[key] if key in match_dict else 0 for key in truth_dict.keys())
         context["recall_macro"] = round((1 / len(truth_dict.keys())) * sum_recall, 2)
     except (ZeroDivisionError, ValueError):
-        print("recall macro error")
         context["recall_macro"] = 0.00
 
     # F1 Micro
@@ -270,7 +267,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
         context["f1_micro"] = round((2 * context["precision_micro"] * context["recall_micro"]) / \
                                     (context["precision_micro"] + context["recall_micro"]), 2)
     except (ZeroDivisionError, ValueError):
-        print("f1 micro error")
         context["f1_micro"] = 0.00
 
     # F1 Macro
@@ -278,7 +274,6 @@ def calculate_metrics(context: dict, truth, hypothesis):
         context["f1_macro"] = round((2 * context["precision_macro"] * context["recall_macro"]) / \
                                     (context["precision_macro"] + context["recall_macro"]), 2)
     except (ZeroDivisionError, ValueError):
-        print("f1 macro error")
         context["f1_macro"] = 0.00
 
     return context
