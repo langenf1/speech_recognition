@@ -6,7 +6,7 @@ import jiwer
 from typing import Union
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from src.main.analyzer import save_recording, speech_to_text
+from src.main.analyzer import save_recording, speech_to_text, calculate_metrics
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -66,7 +66,7 @@ def index(req: HttpRequest) -> Union[HttpResponse, JsonResponse]:
         return JsonResponse(res)
 
     if req.method == 'POST' and "text_upload" in req.POST:
-        # Calculate WER, WCR
+        # Calculate metrics
         transformation = jiwer.Compose([
             jiwer.ToLowerCase(),
             jiwer.RemoveMultipleSpaces(),
@@ -77,25 +77,17 @@ def index(req: HttpRequest) -> Union[HttpResponse, JsonResponse]:
             jiwer.RemovePunctuation()
         ])
 
-        try:
-            truth = transformation(req.POST['text_upload'])
-            hypothesis = transformation(context['text'])
-            context['wer'] = round(jiwer.wer(truth=truth,
-                                             hypothesis=hypothesis), 2)
+        truth = transformation(req.POST['text_upload'])
+        hypothesis = transformation(context['text'])
 
-            count = 0
-            for true, hypo in zip(truth, hypothesis):
-                if true == hypo:
-                    count += 1
-
-            context['wcr'] = round(count / len(hypothesis), 2)
-        except (ValueError, ZeroDivisionError):
-            context['wer'] = 0
-            context['wcr'] = 0
-
+        context = calculate_metrics(context, truth, hypothesis)
         req.session['context'] = context
+        print(context)
 
-        res = {"wer": context['wer'], "wcr": context['wcr'], "rtf": context['rtf']}
+        res = {'wer': context['wer'], 'wcr': context['wcr'], 'rtf': context['rtf'],
+               'precision_micro': context['precision_micro'], 'precision_macro': context['precision_macro'],
+               'recall_micro': context['recall_micro'], 'recall_macro': context['recall_macro'],
+               'f1_micro': context['f1_micro'], 'f1_macro': context['f1_macro']}
         return JsonResponse(res)
 
     context['text'] = ""

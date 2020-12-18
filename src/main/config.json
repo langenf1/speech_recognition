@@ -1,8 +1,12 @@
-{ "totalfiles": null,
-  "audio_length": null,
-  "audio_bitrate": null,
-  "audio_extension": null,
+{
   "full_text": "",
   "wer": 0.00,
   "wcr": 0.00,
-  "rtf": 0.00 }
+  "rtf": 0.00,
+  "f1_micro":  0.00,
+  "f1_macro":  0.00,
+  "precision_micro":  0.00,
+  "precision_macro":  0.00,
+  "recall_micro":  0.00,
+  "recall_macro":  0.00
+}
