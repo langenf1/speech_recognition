@@ -19,11 +19,23 @@
                 <h5>Word Error Rate: </h5>
                 <h5>Word Correct Rate: </h5>
                 <h5>Real Time Factor: </h5>
+                <h5>Precision Micro: </h5>
+                <h5>Precision Macro: </h5>
+                <h5>Recall Micro: </h5>
+                <h5>Recall Macro: </h5>
+                <h5>F1 Micro: </h5>
+                <h5>F1 Macro: </h5>
             </div>
             <div style="margin: 0 auto; text-align: left; display: inline-block">
                 <h5><div id="wer">{{ wer }}</div></h5>
                 <h5><div id="wcr">{{ wcr }}</div></h5>
                 <h5><div id="rtf">{{ rtf }}</div></h5>
+                <h5><div id="precision_micro">{{ precision_micro }}</div></h5>
+                <h5><div id="precision_macro">{{ precision_macro }}</div></h5>
+                <h5><div id="recall_micro">{{ recall_micro }}</div></h5>
+                <h5><div id="recall_macro">{{ recall_macro }}</div></h5>
+                <h5><div id="f1_micro">{{ f1_micro }}</div></h5>
+                <h5><div id="f1_macro">{{ f1_macro }}</div></h5>
             </div>
         </div>
         <form method="POST" enctype="multipart/form-data" id="information" name="information"
@@ -31,13 +43,11 @@
             {% csrf_token %}
             <button type="submit">Update</button>
         </form>
-        <h4>Audio Transcription:</h4>
-        <h5 id="full_text">{{ text }}</h5>
     </div>
 
     <!-- Input text -->
     <div id="text-wrapper">
-    <h4>Audio Script</h4>
+        <h4>Audio Script</h4>
         <div style="width: 75%; text-align: center; margin: 0 auto">
             <form>
                 <div class="form-group">
@@ -45,6 +55,8 @@
                 </div>
             </form>
         </div>
+        <h4>Audio Transcription:</h4>
+        <h5 id="full_text">{{ text }}</h5>
     </div>
 
     <!-- Recorder -->

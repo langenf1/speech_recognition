@@ -1,5 +1,5 @@
 let counting, counter, elem, timer, i, limit, rec, should_record, mediaRecorder, error, full_text, oldContent, seconds_per_cut;
-let wer, wcr, rtf, reset_text, input_text;
+let wer, wcr, rtf, precision_micro, precision_macro, recall_micro, recall_macro, f1_micro, f1_macro, reset_text, input_text;
 let recordedChunks = [];
 
 window.onload = function () {
@@ -16,11 +16,25 @@ window.onload = function () {
     wer = document.getElementById("wer");
     wcr = document.getElementById("wcr");
     rtf = document.getElementById("rtf");
+    precision_micro = document.getElementById("precision_micro");
+    precision_macro = document.getElementById("precision_macro");
+    recall_micro = document.getElementById("recall_micro");
+    recall_macro = document.getElementById("recall_macro");
+    f1_micro = document.getElementById("f1_micro");
+    f1_macro = document.getElementById("f1_macro");
     full_text.innerHTML = "";
     input_text.value = "";
-    wer.innerHTML = "0.0";
-    wcr.innerHTML = "0.0";
-    rtf.innerHTML = "0.0";
+
+    wer.innerHTML = "0.00";
+    wcr.innerHTML = "0.00";
+    rtf.innerHTML = "0.00";
+    precision_micro.innerHTML = "0.00";
+    precision_macro.innerHTML = "0.00";
+    recall_micro.innerHTML = "0.00";
+    recall_macro.innerHTML = "0.00";
+    f1_micro.innerHTML = "0.00";
+    f1_macro.innerHTML = "0.00";
+
     counter.innerHTML = "<h4>" + 0 + "</h4>";
     seconds_per_cut = document.getElementById("num");
     should_record = false;
@@ -188,5 +202,11 @@ function upload_text(data) {
         wer.innerHTML = data['wer'];
         wcr.innerHTML = data['wcr'];
         rtf.innerHTML = data['rtf'];
+        precision_micro.innerHTML = data['precision_micro'];
+        precision_macro.innerHTML = data['precision_macro'];
+        recall_micro.innerHTML = data['recall_micro'];
+        recall_macro.innerHTML = data['recall_macro'];
+        f1_micro.innerHTML = data['f1_micro'];
+        f1_macro.innerHTML = data['f1_macro'];
     });
 }

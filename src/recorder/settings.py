@@ -18,9 +18,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-# Name of the dataset made by the classificator
-DS_NAME_CLASSIFICATOR = "UA-classificator"
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -28,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'p3gu6b%^l3&8t_ozhcy(2$+&!dj_gs$-ufm)jem@#u6304jo*o'
+SECRET_KEY = '*2_=ojikyl!su5l(osebwd17a7c=ol+)wtq54*=_11f%3gcjj$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Get DEBUG state from environment
