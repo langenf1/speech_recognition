@@ -1,5 +1,5 @@
 # Speech Recognition Demo Application
-[![version](https://img.shields.io/badge/version-v0.0.1-brightgreen)]()
+[![version](https://img.shields.io/badge/version-v0.0.4-brightgreen)]()
 [![Python](https://img.shields.io/badge/Python-~v3.6-blue)](https://www.python.org/)
 
 This repository holds the speech recognition demo application for the Human Machine Interface course at the HvA.
