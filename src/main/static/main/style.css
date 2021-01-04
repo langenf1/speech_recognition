@@ -79,7 +79,7 @@ a:focus {
     display: table-cell;
     text-align: center;
     padding-top: 10px;
-    width: 25%;
+    width: 33%;
 }
 
 #recorder-wrapper {
@@ -92,7 +92,7 @@ a:focus {
     display: table-cell;
     text-align: center;
     padding-top: 10px;
-    width: 25%;
+    width: 33%;
 }
 
 #text-wrapper {
@@ -101,7 +101,7 @@ a:focus {
     display: table-cell;
     text-align: center;
     padding-top: 10px;
-    width: 25%;
+    width: 33%;
 }
 
 h4 {
