@@ -147,14 +147,22 @@ def speech_to_text(audio_file_path, language_code="en", project_id="clean-pilot-
     of the conversation."""
     session_client = dialogflow.SessionsClient()
 
-    # Note: hard coding audio_encoding and sample_rate_hertz for simplicity.
     audio_encoding = dialogflow.enums.AudioEncoding.AUDIO_ENCODING_UNSPECIFIED
     if audio_file_path.split(".")[-1] == "wav":
         sample_rate_hertz, length = get_audio_features(audio_file_path)
     else:
-        audio = mutagen.mp3.MP3(audio_file_path)
-        length = audio.info.length
-        sample_rate_hertz = audio.info.sample_rate
+        try:
+            # Convert to wav with 1 audio channel
+            subprocess.call('ffmpeg -y -i {} -acodec pcm_s16le -ac 1 -ar 48000 {}_converted.wav'
+                            .format(audio_file_path, audio_file_path[:-4]),
+                            shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            os.remove(audio_file_path)
+            audio_file_path = audio_file_path[:-4] + "_converted.wav"
+            sample_rate_hertz, length = get_audio_features(audio_file_path)
+        except Exception:
+            audio = mutagen.mp3.MP3(audio_file_path)
+            length = audio.info.length
+            sample_rate_hertz = audio.info.sample_rate
 
     session = session_client.session_path(project_id, session_id)
 
